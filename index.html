@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriber Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .container {
+            width: 90%; /* Adjusted for mobile devices */
+            max-width: 600px; /* Optional max width */
+            margin: auto;
+            text-align: center;
+        }
+
+        .edit-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(21, 168, 95);
+            padding: 20px;
+            border: 1px solid #ddd;
+            z-index: 1000;
+            max-height: 80%;
+            overflow-y: auto;
+            width: 80%; /* Default width */
+        }
+
+        @media (max-width: 600px) {
+            .edit-form {
+                width: 90%; /* Fit mobile screen */
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .form-input {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .form-input input,
+        .form-input select {
+            padding: 10px; /* Increased padding for better touch */
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 15px; /* More padding for mobile */
+            background-color: #4CAF50;
+            color: rgb(182, 9, 9);
+            border: none;
+            cursor: pointer;
+            font-size: 16px; /* Larger font size */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .admin-login {
+            margin-top: 20px;
+        }
+
+        /* Style adjustments for radio buttons */
+        .form-input label {
+            display: block; /* Each label on a new line */
+            margin-bottom: 5px; /* Add some spacing */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div><img src="./aamb.png" alt="Logo"></div>
+    <h1 style="font-size: 21px;color: red;">EXAM SUCCESS OFFICIAL BEN <br>DATABASE FOR 2025 JAMB SUBSCRIBERS {E.S.E.C}</h1>
+    <form id="subscriberForm">
+        <div class="form-input">
+            <label for="fullName">Your Full Name</label>
+            <input type="text" id="fullName" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-input">
+            <label for="profileCode">Your Profile Code</label>
+            <input type="text" id="profileCode" placeholder="Enter profile code" value="NOT AVAILABLE NOW" required>
+        </div>
+        <div class="form-input">
+            <label for="examTownCode">Your Exam Town Code</label>
+            <input type="text" id="examTownCode" placeholder="Enter exam town code" value="NOT AVAILABLE NOW" required>
+        </div>
+
+        <div class="form-input" style="margin-bottom: 50px; margin-top: 30px;">
+            <label style="text-transform: uppercase; color: rgb(89, 0, 255);">The Assistance Package</label>
+            <label>
+                <input type="radio" name="assistancePackage" value="Direct System" required>
+                Direct to System
+            </label>
+            <label>
+                <input type="radio" name="assistancePackage" value="Direct Mobile">
+                Direct to Mobile
+            </label>
+            <label>
+                <input type="radio" name="assistancePackage" value="Merge Package">
+                Merge Package
+            </label>
+            <label>
+                <input type="radio" name="assistancePackage" value="Per Subject">
+                Per Subject
+            </label>
+        </div>
+
+        <div class="form-input">
+            <label for="score">Your Desire Score</label>
+            <input type="number" id="score" placeholder="Enter your Desire Score" required>
+        </div>
+
+        <div class="form-input">
+            <label for="amountPaid">Input the Amount You  Have Paid</label>
+            <input type="number" id="amountPaid" placeholder="Enter amount you have paid" required>
+        </div>
+
+        <div class="form-input">
+            <label for="paymentDetails">Payment Details</label>
+            <select id="paymentDetails" required>
+                <option value="">Select payment type</option>
+                <option value="Full Payment">Full Payment</option>
+                <option value="Half Payment">Half Payment</option>
+                <option value="Deposit Payment">Deposit Payment</option>
+            </select>
+        </div>
+
+        <button type="submit">Register Your details Now</button>
+    </form>
+    <div id="message"></div>
+
+    <!-- Section for editing subscriber details -->
+    <div class="overlay" id="overlay"></div>
+    <div class="edit-form" id="editForm">
+        <h2>Update Your Details</h2>
+        <div class="form-input">
+            <label for="editFullName">Full Name</label>
+            <input type="text" id="editFullName" required>
+        </div>
+        <div class="form-input">
+            <label for="editProfileCode">Profile Code</label>
+            <input type="text" id="editProfileCode" value="NOT AVAILABLE NOW" required>
+        </div>
+        <div class="form-input">
+            <label for="editExamTownCode">Exam Town Code</label>
+            <input type="text" id="editExamTownCode" value="NOT AVAILABLE NOW" required>
+        </div>
+        <div class="form-input">
+            <label for="editAssistancePackage">Assistance Package</label>
+            <select id="editAssistancePackage">
+                <option value="Direct System">Direct to System</option>
+                <option value="Direct Mobile">Direct to Mobile</option>
+                <option value="Merge Package">Merge Package</option>
+                <option value="Per Subject">Per Subject</option>
+            </select>
+        </div>
+        <div class="form-input">
+            <label for="editScore">Desire Score</label>
+            <input type="number" id="editScore" required>
+        </div>
+        <div class="form-input">
+            <label for="editAmountPaid">Amount You have Paid</label>
+            <input type="number" id="editAmountPaid" required>
+        </div>
+        <div class="form-input">
+            <label for="editPaymentDetails">Payment Details</label>
+            <select id="editPaymentDetails" required>
+                <option value="">Select payment type</option>
+                <option value="Full Payment">Full Payment</option>
+                <option value="Half Payment">Half Payment</option>
+                <option value="Deposit Payment">Deposit Payment</option>
+            </select>
+        </div>
+        <button id="saveChanges">Save Changes</button>
+        <button id="cancelEdit">Cancel</button>
+    </div>
+
+    <!-- Admin Login Button -->
+    <div class="admin-login">
+        <a href="login.html"><button>Admin Login [EXAM SUCCESS OFFICIAL BEN]</button></a>
+    </div>
+</div>
+
+<script>
+    const apiUrl = "https://67474c4e38c8741641d63b06.mockapi.io/Subscribers";
+    let currentSubscriberId = null; // Store the subscriber ID globally when editing
+
+    // Handle form submission (new subscriber or edit)
+    document.getElementById('subscriberForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fullName = document.getElementById('fullName').value;
+        const profileCode = document.getElementById('profileCode').value;
+        const examTownCode = document.getElementById('examTownCode').value;
+        const assistancePackage = document.querySelector('input[name="assistancePackage"]:checked').value;
+        const score = document.getElementById('score').value;
+        const amountPaid = document.getElementById('amountPaid').value;
+        const paymentDetails = document.getElementById('paymentDetails').value;
+
+        if (score < 100 || score > 350) {
+            alert("Score must be between 100 and 350.");
+            return;
+        }
+
+        // Check if the subscriber exists
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(subscribers => {
+                const existingSubscriber = subscribers.find(subscriber => subscriber.fullName === fullName);
+
+                if (existingSubscriber) {
+                    // Set global variable to store the current subscriber ID
+                    currentSubscriberId = existingSubscriber.id;
+
+                    // Show edit form with existing details
+                    document.getElementById('editFullName').value = existingSubscriber.fullName;
+                    document.getElementById('editProfileCode').value = existingSubscriber.profileCode;
+                    document.getElementById('editExamTownCode').value = existingSubscriber.examTownCode;
+                    document.getElementById('editAssistancePackage').value = existingSubscriber.assistancePackage;
+                    document.getElementById('editScore').value = existingSubscriber.score;
+                    document.getElementById('editAmountPaid').value = existingSubscriber.amountPaid;
+                    document.getElementById('editPaymentDetails').value = existingSubscriber.paymentDetails;
+
+                    // Display the edit form and overlay
+                    document.getElementById('overlay').style.display = 'block';
+                    document.getElementById('editForm').style.display = 'block';
+                } else {
+                    // Create a new subscriber
+                    const newSubscriber = {
+                        fullName,
+                        profileCode,
+                        examTownCode,
+                        assistancePackage,
+                        score,
+                        amountPaid,
+                        paymentDetails
+                    };
+
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newSubscriber),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('message').innerText = "Dear Candidate your details has been registered successfully!";
+                            document.getElementById('subscriberForm').reset();
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+    });
+
+    // Save changes in the edit form
+    document.getElementById('saveChanges').addEventListener('click', function() {
+        const updatedSubscriber = {
+            fullName: document.getElementById('editFullName').value,
+            profileCode: document.getElementById('editProfileCode').value,
+            examTownCode: document.getElementById('editExamTownCode').value,
+            assistancePackage: document.getElementById('editAssistancePackage').value,
+            score: document.getElementById('editScore').value,
+            amountPaid: document.getElementById('editAmountPaid').value,
+            paymentDetails: document.getElementById('editPaymentDetails').value,
+        };
+
+        // Update the subscriber details
+        fetch(`${apiUrl}/${currentSubscriberId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedSubscriber),
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = "Subscribers details updated successfully!";
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('editForm').style.display = 'none';
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // Cancel editing
+    document.getElementById('cancelEdit').addEventListener('click', function() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('editForm').style.display = 'none';
+    });
+</script>
+</body>
+</html>

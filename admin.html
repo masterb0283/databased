@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            margin: auto;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 2px solid #ddd;
+            padding: 8px;
+        }
+
+        th, td {
+            text-align: left;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #1e5f48;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .edit-form {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            z-index: 1000;
+            max-height: 80%;
+            overflow-y: auto;
+            width: 80%;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .form-input {
+            margin: 10px 0;
+        }
+
+        .form-input input, .form-input select {
+            padding: 5px;
+            width: 100%;
+        }
+
+        .odd {
+            background-color: yellow;
+        }
+
+        .even {
+            background-color: #8B0000; /* Deep Red */
+            color: white; /* To improve readability */
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+            .edit-form {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: red;">EXAM SUCCESS OFFICIAL BEN 07073978569<br>2025 JAMB SUBSCRIBERS DATABASE</h1>
+        <button id="viewSubscribers">Check 2025 Registered Subscribers</button>
+        <div id="subscribersList"></div>
+    </div>
+
+    <!-- Edit Subscriber Form -->
+    <div class="overlay" id="overlay"></div>
+    <div class="edit-form" id="editForm">
+        <h2>Edit Subscriber</h2>
+        <div class="form-input">
+            <label for="editFullName">Full Name</label>
+            <input type="text" id="editFullName">
+        </div>
+        <div class="form-input">
+            <label for="editProfileCode">Profile Code</label>
+            <input type="text" id="editProfileCode">
+        </div>
+        <div class="form-input">
+            <label for="editExamTownCode">Exam Town Code</label>
+            <input type="text" id="editExamTownCode">
+        </div>
+        <div class="form-input">
+            <label for="editBatch">Batch</label>
+            <select id="editBatch">
+                <option value="First Batch">First Batch</option>
+                <option value="Second Batch">Second Batch</option>
+                <option value="Third Batch">Third Batch</option>
+                <option value="Last Batch">Last Batch</option>
+            </select>
+        </div>
+        <div class="form-input">
+            <label for="editAssistancePackage">Assistance Package</label>
+            <select id="editAssistancePackage">
+                <option value="Direct to System">Direct to System</option>
+                <option value="Direct to Mobile">Direct to Mobile</option>
+                <option value="Merge Package">Merge Package</option>
+                <option value="Per Subject">Per Subject</option>
+            </select>
+        </div>
+        <div class="form-input">
+            <label for="editScore">Score</label>
+            <input type="text" id="editScore">
+        </div>
+        <div class="form-input">
+            <label for="editAmountPaid">Amount Paid</label>
+            <input type="text" id="editAmountPaid" placeholder="Enter amount paid">
+        </div>
+        <div class="form-input">
+            <label for="editPaymentDetails">Payment Details</label>
+            <select id="editPaymentDetails">
+                <option value="Full payment">Full payment</option>
+                <option value="Half payment">Half payment</option>
+                <option value="Deposit payment">Deposit payment</option>
+            </select>
+        </div>
+        
+        <div class="form-input">
+            <h3>Verify Candidate</h3>
+            <label>
+                <input type="radio" name="verification" value="verified" required>
+                Verified
+            </label><br>
+            <label>
+                <input type="radio" name="verification" value="not_verified" required>
+                Not Verified
+            </label><br>
+            <label>
+                <input type="radio" name="verification" value="pending" required>
+                Pending
+            </label>
+        </div>
+
+        <button id="saveChanges">Save Changes</button>
+        <button id="cancelEdit">Cancel</button>
+    </div>
+
+    <script>
+        let currentEditId = null;
+
+        document.getElementById('viewSubscribers').addEventListener('click', function() {
+            fetch('https://67474c4e38c8741641d63b06.mockapi.io/Subscribers')
+            .then(response => response.json())
+            .then(subscribers => {
+                const subscribersList = document.getElementById('subscribersList');
+                subscribersList.innerHTML = '';
+
+                if (subscribers.length === 0) {
+                    subscribersList.innerHTML = '<p>No subscribers found.</p>';
+                    return;
+                }
+
+                const table = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Serial Number</th>
+                                <th>Full Name</th>
+                                <th>Profile Code</th>
+                                <th>Exam Town Code</th>
+                                <th>Batch</th>
+                                <th>Assistance Package</th>
+                                <th>Score</th>
+                                <th>Amount Paid</th>
+                                <th>Payment Details</th>
+                                <th>Verification Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${subscribers.map((subscriber) => `
+                                <tr class="${subscriber.id % 2 === 0 ? 'even' : 'odd'}">
+                                    <td>${subscriber.id}</td>
+                                    <td>${subscriber.fullName}</td>
+                                    <td>${subscriber.profileCode}</td>
+                                    <td>${subscriber.examTownCode}</td>
+                                    <td>${subscriber.batch}</td>
+                                    <td>${subscriber.assistancePackage}</td>
+                                    <td>${subscriber.score}</td>
+                                    <td>${subscriber.amountPaid}</td>
+                                    <td>${subscriber.paymentDetails}</td>
+                                    <td>${subscriber.verification}</td>
+                                    <td>
+                                        <button onclick="editSubscriber(${subscriber.id})">Edit</button>
+                                        <button onclick="deleteSubscriber(${subscriber.id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                subscribersList.innerHTML = table;
+            })
+            .catch(error => console.error('Error fetching subscribers:', error));
+        });
+
+        // The rest of your script remains unchanged...
+    </script>
+</body>
+</html>
