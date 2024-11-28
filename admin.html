@@ -178,65 +178,138 @@
 
     <script>
         let currentEditId = null;
-
+    
         document.getElementById('viewSubscribers').addEventListener('click', function() {
             fetch('https://67474c4e38c8741641d63b06.mockapi.io/Subscribers')
-            .then(response => response.json())
-            .then(subscribers => {
-                const subscribersList = document.getElementById('subscribersList');
-                subscribersList.innerHTML = '';
-
-                if (subscribers.length === 0) {
-                    subscribersList.innerHTML = '<p>No subscribers found.</p>';
-                    return;
-                }
-
-                const table = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Serial Number</th>
-                                <th>Full Name</th>
-                                <th>Profile Code</th>
-                                <th>Exam Town Code</th>
-                                <th>Batch</th>
-                                <th>Assistance Package</th>
-                                <th>Score</th>
-                                <th>Amount Paid</th>
-                                <th>Payment Details</th>
-                                <th>Verification Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${subscribers.map((subscriber) => `
-                                <tr class="${subscriber.id % 2 === 0 ? 'even' : 'odd'}">
-                                    <td>${subscriber.id}</td>
-                                    <td>${subscriber.fullName}</td>
-                                    <td>${subscriber.profileCode}</td>
-                                    <td>${subscriber.examTownCode}</td>
-                                    <td>${subscriber.batch}</td>
-                                    <td>${subscriber.assistancePackage}</td>
-                                    <td>${subscriber.score}</td>
-                                    <td>${subscriber.amountPaid}</td>
-                                    <td>${subscriber.paymentDetails}</td>
-                                    <td>${subscriber.verification}</td>
-                                    <td>
-                                        <button onclick="editSubscriber(${subscriber.id})">Edit</button>
-                                        <button onclick="deleteSubscriber(${subscriber.id})">Delete</button>
-                                    </td>
+                .then(response => response.json())
+                .then(subscribers => {
+                    const subscribersList = document.getElementById('subscribersList');
+                    subscribersList.innerHTML = '';
+    
+                    if (subscribers.length === 0) {
+                        subscribersList.innerHTML = '<p>No subscribers found.</p>';
+                        return;
+                    }
+    
+                    const table = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Serial Number</th>
+                                    <th>Full Name</th>
+                                    <th>Profile Code</th>
+                                    <th>Exam Town Code</th>
+                                    <th>Batch</th>
+                                    <th>Assistance Package</th>
+                                    <th>Score</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment Details</th>
+                                    <th>Verification Status</th>
+                                    <th>Actions</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                subscribersList.innerHTML = table;
-            })
-            .catch(error => console.error('Error fetching subscribers:', error));
+                            </thead>
+                            <tbody>
+                                ${subscribers.map((subscriber) => `
+                                    <tr class="${subscriber.id % 2 === 0 ? 'even' : 'odd'}">
+                                        <td>${subscriber.id}</td>
+                                        <td>${subscriber.fullName}</td>
+                                        <td>${subscriber.profileCode}</td>
+                                        <td>${subscriber.examTownCode}</td>
+                                        <td>${subscriber.batch}</td>
+                                        <td>${subscriber.assistancePackage}</td>
+                                        <td>${subscriber.score}</td>
+                                        <td>${subscriber.amountPaid}</td>
+                                        <td>${subscriber.paymentDetails}</td>
+                                        <td>${subscriber.verification}</td>
+                                        <td>
+                                            <button onclick="editSubscriber(${subscriber.id})">Edit</button>
+                                            <button onclick="deleteSubscriber(${subscriber.id})">Delete</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+    
+                    subscribersList.innerHTML = table;
+                })
+                .catch(error => console.error('Error fetching subscribers:', error));
         });
-
-        // The rest of your script remains unchanged...
+    
+        function editSubscriber(id) {
+            currentEditId = id;
+    
+            // Fetch the subscriber details
+            fetch(`https://67474c4e38c8741641d63b06.mockapi.io/Subscribers/${id}`)
+                .then(response => response.json())
+                .then(subscriber => {
+                    // Populate the form fields
+                    document.getElementById('editFullName').value = subscriber.fullName;
+                    document.getElementById('editProfileCode').value = subscriber.profileCode;
+                    document.getElementById('editExamTownCode').value = subscriber.examTownCode;
+                    document.getElementById('editBatch').value = subscriber.batch;
+                    document.getElementById('editAssistancePackage').value = subscriber.assistancePackage;
+                    document.getElementById('editScore').value = subscriber.score;
+                    document.getElementById('editAmountPaid').value = subscriber.amountPaid;
+                    document.getElementById('editPaymentDetails').value = subscriber.paymentDetails;
+    
+                    const verificationRadios = document.getElementsByName('verification');
+                    verificationRadios.forEach(radio => {
+                        if (radio.value === subscriber.verification) {
+                            radio.checked = true;
+                        }
+                    });
+    
+                    // Show the edit form
+                    document.getElementById('editForm').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching subscriber details:', error));
+        }
+    
+        document.getElementById('saveChanges').addEventListener('click', function() {
+            const updatedSubscriber = {
+                fullName: document.getElementById('editFullName').value,
+                profileCode: document.getElementById('editProfileCode').value,
+                examTownCode: document.getElementById('editExamTownCode').value,
+                batch: document.getElementById('editBatch').value,
+                assistancePackage: document.getElementById('editAssistancePackage').value,
+                score: document.getElementById('editScore').value,
+                amountPaid: document.getElementById('editAmountPaid').value,
+                paymentDetails: document.getElementById('editPaymentDetails').value,
+                verification: document.querySelector('input[name="verification"]:checked').value,
+            };
+    
+            fetch(`https://67474c4e38c8741641d63b06.mockapi.io/Subscribers/${currentEditId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedSubscriber),
+            })
+                .then(() => {
+                    alert('Subscriber updated successfully');
+                    document.getElementById('editForm').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('viewSubscribers').click(); // Refresh the list
+                })
+                .catch(error => console.error('Error updating subscriber:', error));
+        });
+    
+        document.getElementById('cancelEdit').addEventListener('click', function() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+    
+        function deleteSubscriber(id) {
+            if (confirm('Are you sure you want to delete this subscriber?')) {
+                fetch(`https://67474c4e38c8741641d63b06.mockapi.io/Subscribers/${id}`, {
+                    method: 'DELETE',
+                })
+                    .then(() => {
+                        alert('Subscriber deleted successfully');
+                        document.getElementById('viewSubscribers').click(); // Refresh the list
+                    })
+                    .catch(error => console.error('Error deleting subscriber:', error));
+            }
+        }
     </script>
-</body>
-</html>
+    
